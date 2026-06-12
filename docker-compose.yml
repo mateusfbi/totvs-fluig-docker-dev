@@ -16,7 +16,9 @@ services:
         - FLUIG_DB_HOST=${FLUIG_DB_HOST}
         - FLUIG_DB_PORT=${FLUIG_DB_PORT}
         - FLUIG_DB_NAME=${FLUIG_DB_NAME}
-    container_name: fluig-app        
+    container_name: fluig-app
+    command: >
+      bash -c "[ -f .env ] || cp .env.example .env && /usr/local/bin/start-fluig"        
     volumes:
       - fluig-volume:/opt/fluig-volume
       - fluig_data:/opt/fluig/appserver/standalone/data
