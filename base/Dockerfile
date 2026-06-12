@@ -10,8 +10,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala MySQL Connector
-RUN wget -q https://downloads.mysql.com/archives/get/p/3/file/mysql-connector-j_9.6.0-1ubuntu24.04_all.deb -O /tmp/mysql-connector.deb \
-    && dpkg -i /tmp/mysql-connector.deb && rm /tmp/mysql-connector.deb
+RUN wget --no-check-certificate --user-agent="Mozilla/5.0" \
+    https://downloads.mysql.com/archives/get/p/3/file/mysql-connector-j_9.6.0-1ubuntu24.04_all.deb \
+    -O /tmp/mysql-connector.deb && \
+    dpkg -i /tmp/mysql-connector.deb && \
+    rm /tmp/mysql-connector.deb
 
 COPY . /var/fluig
 
