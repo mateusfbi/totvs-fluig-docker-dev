@@ -4,7 +4,7 @@ ARG TZ=UTC
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /opt/fluig
 
-# Instala dependências e o envsubst (via gettext-base)
+# Instala dependências
 RUN apt-get update && apt-get install -y --no-install-recommends \
     fontconfig unzip curl wget vim gettext-base \
     && rm -rf /var/lib/apt/lists/*
@@ -16,16 +16,17 @@ RUN wget --no-check-certificate --user-agent="Mozilla/5.0" \
     dpkg -i /tmp/mysql-connector.deb && \
     rm /tmp/mysql-connector.deb
 
-COPY . /var/fluig
+# Copia apenas o necessário para um diretório de build
+COPY . /tmp/build
 
-# Processa o template do install.conf dinamicamente
-RUN envsubst < /var/fluig/config/install.conf.template > /var/fluig/install.conf
+# Processa o template usando o caminho correto
+RUN envsubst < /tmp/build/config/install.conf.template > /tmp/build/install.conf
 
-# Instalação do Fluig
-RUN cd /var/fluig/installer && \
+# Instalação do Fluig (ajustado para o novo caminho)
+RUN cd /tmp/build && \
     chmod +x ./jdk-64/bin/java && \
-    ./jdk-64/bin/java -cp fluig-installer.jar com.fluig.install.ExecuteInstall /var/fluig/install.conf && \
+    ./jdk-64/bin/java -cp fluig-installer.jar com.fluig.install.ExecuteInstall /tmp/build/install.conf && \
     sed -i 's#<inet-address .*#<any-address/>#g' /opt/fluig/appserver/standalone/configuration/standalone.xml && \
-    rm -rf /var/fluig
+    rm -rf /tmp/build
 
 ENTRYPOINT ["start-fluig"]
