@@ -16,7 +16,13 @@ services:
         - FLUIG_DB_HOST=${FLUIG_DB_HOST}
         - FLUIG_DB_PORT=${FLUIG_DB_PORT}
         - FLUIG_DB_NAME=${FLUIG_DB_NAME}
+        - LS_HOST=${LS_HOST}
+        - LS_PORT=${LS_PORT}
     container_name: fluig-app
+    ulimits:
+      nofile:
+        soft: 65000
+        hard: 65000    
     command: >
       bash -c "[ -f .env ] || cp .env.example .env && /usr/local/bin/start-fluig"        
     volumes:
@@ -28,7 +34,7 @@ services:
       - 8080:8080
       - 7777:7777
       - 8888:8888
-      - 8000:8000
+      - 8001:8000
       - 8983:8983
       - 9990:9990
     networks:
@@ -38,16 +44,15 @@ services:
         condition: service_healthy
 
   mysql:
-    image: mysql:8
+    image: mysql:8.0.36
     container_name: fluig-mysql
-    command: >
-          mysqld 
-          --default-authentication-plugin=mysql_native_password
-          --character-set-server=utf8mb4 
-          --collation-server=utf8mb4_general_ci 
-          --lower_case_table_names=1 
-          --default_storage_engine=InnoDB 
-          --max_allowed_packet=256M
+    command: [
+      "mysqld",
+      "--lower_case_table_names=1",
+      "--character-set-server=utf8mb4",
+      "--collation-server=utf8mb4_general_ci",
+      "--default_storage_engine=InnoDB"
+    ]
     ports:
       - 3305:3306
     environment:
@@ -57,7 +62,7 @@ services:
       MYSQL_USER: ${FLUIG_DB_USER}
       MYSQL_PASSWORD: ${FLUIG_DB_PASS}
     volumes:
-      - mysql_data:/var/lib/mysql      
+      - mysql_data:/var/lib/mysql     
     networks:
       - fluigNetwork
     healthcheck:
@@ -85,11 +90,11 @@ networks:
 volumes:
   fluig-volume:
     driver: local
-  mysql_data:
-    driver: local
   fluig_data:
     driver: local
   fluig_deploy:
     driver: local
   fluig_log:
+    driver: local
+  mysql_data:
     driver: local

@@ -13,6 +13,8 @@ ARG FLUIG_DB_PASS
 ARG FLUIG_DB_HOST
 ARG FLUIG_DB_PORT
 ARG FLUIG_DB_NAME
+ARG LS_HOST
+ARG LS_PORT
 # 2. Transfere os valores de ARG para ENV para o envsubst conseguir ler
 ENV TZ=$TZ
 ENV INSTALL_NODE=$INSTALL_NODE
@@ -24,6 +26,8 @@ ENV FLUIG_DB_PASS=$FLUIG_DB_PASS
 ENV FLUIG_DB_HOST=$FLUIG_DB_HOST
 ENV FLUIG_DB_PORT=$FLUIG_DB_PORT
 ENV FLUIG_DB_NAME=$FLUIG_DB_NAME
+ENV LS_HOST=$LS_HOST
+ENV LS_PORT=$LS_PORT
 
 WORKDIR /opt/fluig
 # Copia o script da pasta local para dentro do container
@@ -36,12 +40,13 @@ RUN apt-get update && \
     curl \
     unzip \
     tzdata \
-    wget \
     fontconfig \
+    gettext-base \
+    wget \
+    vim \
     libfreetype6 \
     ca-certificates \
     openjdk-11-jdk \
-    gettext-base \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -73,12 +78,27 @@ RUN chmod -R +x /tmp/build/installer/
 # Instalação do Fluig usando os arquivos em /tmp/build/installer
 RUN cd /tmp/build/installer && \
 chmod +x ./jdk-64/bin/java && \
-    # Executa e captura a saída
-    ./jdk-64/bin/java -cp fluig-installer.jar com.fluig.install.ExecuteInstall /tmp/build/install.conf > /tmp/install.log 2>&1 || \
-    { cat /tmp/install.log; echo "Instalação falhou, abortando build."; exit 1; } && \
-    # Só executa se o comando anterior (o instalador) for bem-sucedido
+    ./jdk-64/bin/java -cp fluig-installer.jar com.fluig.install.ExecuteInstall /tmp/build/install.conf > /tmp/install.log && \    
     sed -i 's#<inet-address .*#<any-address/>#g' /opt/fluig/appserver/standalone/configuration/standalone.xml && \
     cd /opt/fluig && \
     rm -rf /tmp/build
+RUN echo "alias log='tail -f /opt/fluig/appserver/standalone/log/server.log'" >> /root/.bashrc;
+# Configura os scripts de inicialização para o Fluig e RealTime, e garante que o Node.js tenha permissão de execução
+RUN cd /opt/fluig/appserver/bin/service && \    
+    cp wildfly-init-debian.sh /etc/init.d/fluig && \
+    chmod -R +x /etc/init.d/fluig && \
+    update-rc.d fluig defaults
+    
+RUN if [ "$INSTALL_NODE" = "true" ]; then \ 
+        cd /opt/fluig/node && \
+        cp fluig_RealTime /etc/init.d/fluig_RealTime && \
+        chmod +x /etc/init.d/fluig_RealTime && \
+        update-rc.d fluig_RealTime defaults && \
+        chmod +x /opt/fluig/node/bin/node && \
+        chmod +x /opt/fluig/node/bin/npm && \
+        echo "Node.js instalado e configurado para iniciar com o sistema."; \
+     else \
+        echo "Node.js não será instalado. Pulando configuração de RealTime."; \
+    fi
 
 ENTRYPOINT ["start-fluig"]
