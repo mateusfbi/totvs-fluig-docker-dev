@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Cria a estrutura e baixa o instalador
-RUN mkdir -p /tmp/build && \
-    curl -L "${FLUIG_URL}" -o /tmp/fluig.zip && \
-    unzip -q /tmp/fluig.zip -d /tmp/build && \
-    rm /tmp/fluig.zip
+RUN mkdir -p /opt/fluig/installer && \
+    curl -L "${FLUIG_URL}" -o /opt/fluig/fluig.zip && \
+    unzip -q /opt/fluig/fluig.zip -d /opt/fluig/installer && \
+    rm /opt/fluig/fluig.zip
 
 # Copia seus arquivos de configuração (install.conf.template) do seu PC para dentro
 COPY ./config/install.conf.template /tmp/build/config/install.conf.template
