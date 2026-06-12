@@ -81,3 +81,12 @@ networks:
 
 volumes:
   fluig-volume:
+    driver: local
+  mysql_data:
+    driver: local
+  fluig_data:
+    driver: local
+  fluig_deploy:
+    driver: local
+  fluig_log:
+    driver: local
