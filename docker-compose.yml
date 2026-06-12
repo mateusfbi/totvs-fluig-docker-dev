@@ -3,7 +3,8 @@ services:
     build:
       context: ./base
       dockerfile: Dockerfile
-    args:
+      args:
+        - VERSAO_FLUIG=2.0.0
         - TZ=${TZ}
         - INSTALL_NODE=${INSTALL_NODE}
         - INSTALL_SOLR=${INSTALL_SOLR}
