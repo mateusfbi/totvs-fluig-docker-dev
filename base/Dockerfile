@@ -26,6 +26,9 @@ ENV FLUIG_DB_PORT=$FLUIG_DB_PORT
 ENV FLUIG_DB_NAME=$FLUIG_DB_NAME
 
 WORKDIR /opt/fluig
+# Copia o script da pasta local para dentro do container
+COPY ./start-fluig /usr/local/bin/start-fluig
+RUN chmod +x /usr/local/bin/start-fluig
 
 # Instala dependências
 RUN apt-get update && \
