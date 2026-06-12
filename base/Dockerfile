@@ -25,4 +25,4 @@ RUN cd /var/fluig/installer && \
     sed -i 's#<inet-address .*#<any-address/>#g' /opt/fluig/appserver/standalone/configuration/standalone.xml && \
     rm -rf /var/fluig
 
-ENTRYPOINT ["start-container"]
+ENTRYPOINT ["start-fluig"]
