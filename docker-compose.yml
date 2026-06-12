@@ -1,5 +1,6 @@
 services:
   fluig:
+    image: fluig-dev:latest
     build:
       context: ./base
       dockerfile: Dockerfile
