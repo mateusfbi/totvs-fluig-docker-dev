@@ -1,0 +1,90 @@
+#
+# Fluig 2.0.0 - Template Dinamico
+#
+
+INSTALL_PATH=/opt/fluig
+server_name=127.0.0.1
+server_port=8080
+server_memory_heapSize=${JAVA_XMS}
+server_memory_heapMaxSize=${JAVA_XMX}
+server_pool_EJBPoolSize=30
+server_accessUrl=
+server_xframeHeadersEnabled=true
+server_secureHeadersEnabled=false
+server_accessConntrolHeadersEnabled=true
+server_statisticsEnabled=false
+
+#
+# Banco de Dados
+#
+db_type=mysql
+db_user=${FLUIG_DB_USER}
+db_password=${FLUIG_DB_PASS}
+db_server=${FLUIG_DB_HOST}
+db_port=${FLUIG_DB_PORT}
+db_name=${FLUIG_DB_NAME}
+db_instance=
+db_driverPath=/usr/share/java/mysql-connector-j-9.6.0.jar
+db_minPoolSize=10
+db_maxPoolSize=120
+db_roMinPoolSize=5
+db_roMaxPoolSize=50
+
+#
+# E-Mail
+#
+email_enabled=true
+email_smtpServer=mailpit
+email_smtpPort=1025
+email_needsSender=false
+email_defaultSender=suporte@fluig.com
+email_needsAuth=false
+email_securityType=none
+email_smtpUser=
+email_smtpPassword=
+email_allNotifications=false
+email_grouped=false
+email_smtpConnectionTimeout=180
+
+#
+# License Server
+#
+license_type=ls
+ls_server=license-server
+ls_port=5555
+
+#
+# FTP Server
+#
+ftp_enabled=true
+ftp_port=9021
+ftp_privatePort=8021
+
+#
+# Open Office
+#
+openoffice_enabled=true
+openoffice_port=15001,15002
+
+#
+# Fluig Datatrace Extractor
+#
+resource_datatraceExtractor_install=true
+
+#
+# Real Time
+#
+resource_node_install=${INSTALL_NODE}
+node_enabled=${INSTALL_NODE}
+node_server=127.0.0.1
+node_publicPort=7777
+node_privatePort=8888
+
+#
+# Solr
+#
+resource_solr_install=${INSTALL_SOLR}
+solr_url=http://127.0.0.1:8983/solr
+solr_remote=false
+solr_cloud=false
+solr_jdk=

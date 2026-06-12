@@ -1,0 +1,80 @@
+services:
+  fluig:
+    build:
+      context: ./base
+      dockerfile: Dockerfile
+    args:
+        - TZ=${TZ}
+        - INSTALL_NODE=${INSTALL_NODE}
+        - INSTALL_SOLR=${INSTALL_SOLR}
+        - JAVA_XMS=${JAVA_XMS}
+        - JAVA_XMX=${JAVA_XMX}
+        - FLUIG_DB_USER=${FLUIG_DB_USER}
+        - FLUIG_DB_PASS=${FLUIG_DB_PASS}
+        - FLUIG_DB_HOST=${FLUIG_DB_HOST}
+        - FLUIG_DB_PORT=${FLUIG_DB_PORT}
+        - FLUIG_DB_NAME=${FLUIG_DB_NAME}
+    container_name: fluig-app        
+    volumes:
+      - fluig-volume:/opt/fluig-volume
+      - fluig_data:/opt/fluig/appserver/standalone/data
+      - fluig_deploy:/opt/fluig/appserver/standalone/deploy
+      - fluig_log:/opt/fluig/appserver/standalone/log      
+    ports:
+      - 8080:8080
+      - 7777:7777
+      - 8888:8888
+      - 8000:8000
+      - 8983:8983
+      - 9990:9990
+    networks:
+      - fluigNetwork
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8
+    container_name: fluig-mysql
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_general_ci', '--lower_case_table_names=1', '--default_storage_engine=InnoDB']
+    ports:
+      - 3305:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${FLUIG_DB_USER}
+      MYSQL_PASSWORD: ${FLUIG_DB_PASS}
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8
+      - --collation-server=utf8_general_ci
+      - --max_allowed_packet=256M  
+    volumes:
+      - mysql_data:/var/lib/mysql      
+    networks:
+      - fluigNetwork
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${FLUIG_DB_USER}", "-p${FLUIG_DB_PASS}"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: fluig-mail
+    environment:
+      TZ: ${TZ}
+    ports:
+      - 8024:8025
+      - 1024:1025
+    networks:
+      - fluigNetwork
+
+networks:
+  fluigNetwork:
+    driver: bridge
+
+volumes:
+  fluig-volume:
