@@ -69,10 +69,14 @@ RUN if [ ! -f "/tmp/build/installer/fluig-installer.jar" ]; then \
 # Processa o template usando o caminho correto
 RUN envsubst < /tmp/build/config/install.conf.template > /tmp/build/install.conf
 
+RUN chmod -R +x /tmp/build/installer/
 # Instalação do Fluig usando os arquivos em /tmp/build/installer
 RUN cd /tmp/build/installer && \
-    chmod +x ./jdk-64/bin/java && \
-    ./jdk-64/bin/java -cp fluig-installer.jar com.fluig.install.ExecuteInstall /tmp/build/install.conf && \
+chmod +x ./jdk-64/bin/java && \
+    # Executa e captura a saída
+    ./jdk-64/bin/java -cp fluig-installer.jar com.fluig.install.ExecuteInstall /tmp/build/install.conf > /tmp/install.log 2>&1 || \
+    { cat /tmp/install.log; echo "Instalação falhou, abortando build."; exit 1; } && \
+    # Só executa se o comando anterior (o instalador) for bem-sucedido
     sed -i 's#<inet-address .*#<any-address/>#g' /opt/fluig/appserver/standalone/configuration/standalone.xml && \
     cd /opt/fluig && \
     rm -rf /tmp/build
