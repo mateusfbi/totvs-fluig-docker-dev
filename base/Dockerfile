@@ -31,8 +31,7 @@ ENV LS_PORT=$LS_PORT
 
 WORKDIR /opt/fluig
 # Copia o script da pasta local para dentro do container
-COPY ./start-fluig /usr/local/bin/start-fluig
-RUN chmod +x /usr/local/bin/start-fluig
+COPY --chmod=755 ./start-fluig.sh /usr/local/bin/start-fluig
 
 # Instala dependências
 RUN apt-get update && \
@@ -71,13 +70,11 @@ RUN if [ ! -f "/tmp/build/installer/fluig-installer.jar" ]; then \
         echo "Instalador local encontrado! Pulando o download."; \
     fi
 
-# Processa o template usando o caminho correto
-RUN envsubst < /tmp/build/config/install.conf.template > /tmp/build/install.conf
-
-RUN chmod -R +x /tmp/build/installer/
-# Instalação do Fluig usando os arquivos em /tmp/build/installer
-RUN cd /tmp/build/installer && \
-chmod +x ./jdk-64/bin/java && \
+# Processa o template, instala o fluig e limpa os arquivos temporários em uma única camada para evitar deixar arquivos sensíveis no histórico do Docker. Também ajusta a configuração do WildFly para aceitar conexões de qualquer endereço e garante que o script de inicialização tenha permissão de execução.
+RUN envsubst < /tmp/build/config/install.conf.template > /tmp/build/install.conf && \
+    chmod -R +x /tmp/build/installer/ && \
+    cd /tmp/build/installer && \
+    chmod +x ./jdk-64/bin/java && \
     ./jdk-64/bin/java -cp fluig-installer.jar com.fluig.install.ExecuteInstall /tmp/build/install.conf > /tmp/install.log && \    
     sed -i 's#<inet-address .*#<any-address/>#g' /opt/fluig/appserver/standalone/configuration/standalone.xml && \
     cd /opt/fluig && \
@@ -101,4 +98,7 @@ RUN if [ "$INSTALL_NODE" = "true" ]; then \
         echo "Node.js não será instalado. Pulando configuração de RealTime."; \
     fi
 
-ENTRYPOINT ["start-fluig"]
+# Configura o diretório de volume para o Fluig
+RUN mkdir -p /opt/fluig/volume
+
+CMD ["start-fluig"]

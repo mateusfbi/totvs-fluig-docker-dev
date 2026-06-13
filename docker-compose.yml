@@ -26,17 +26,21 @@ services:
     command: >
       bash -c "[ -f .env ] || cp .env.example .env && /usr/local/bin/start-fluig"        
     volumes:
-      - fluig-volume:/opt/fluig-volume
-      - fluig_data:/opt/fluig/appserver/standalone/data
+      - fluig-volume:/opt/fluig/volume
       - fluig_deploy:/opt/fluig/appserver/standalone/deploy
       - fluig_log:/opt/fluig/appserver/standalone/log      
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
     ports:
       - 8080:8080
-      - 7777:7777
-      - 8888:8888
-      - 8001:8000
-      - 8983:8983
-      - 9990:9990
+      # Em ambiente de produção, evite expor portas administrativas e serviços internos
+      # O Apache Solr (8983) e o Node (7777/8000) podem conversar na rede interna do Docker
+      # - 8983:8983
+      # - 9990:9990
     networks:
       - fluigNetwork
     depends_on:
@@ -53,8 +57,9 @@ services:
       "--collation-server=utf8mb4_general_ci",
       "--default_storage_engine=InnoDB"
     ]
+    restart: unless-stopped
     ports:
-      - 3305:3306
+      - 127.0.0.1:3305:3306 # O banco fica acessível externamente apenas pela própria máquina host
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_ROOT_HOST: "%"
@@ -89,8 +94,6 @@ networks:
 
 volumes:
   fluig-volume:
-    driver: local
-  fluig_data:
     driver: local
   fluig_deploy:
     driver: local
