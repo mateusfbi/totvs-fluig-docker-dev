@@ -3,8 +3,5 @@
 Thumbs.db
 .vscode/
 .idea/
-# --- Ambientes e Senhas ---
-.env
-*.env.local
 # --- Diretório do instalador ---
 base/installer/*
