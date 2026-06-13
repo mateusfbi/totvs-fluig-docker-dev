@@ -1,4 +1,4 @@
-# TOTVS Fluig - Docker Base Image
+# TOTVS Fluig - Docker DEV
 
 Este repositório contém a infraestrutura como código (Dockerfile e scripts associados) para criar uma imagem Docker base contendo a instalação automatizada da plataforma **TOTVS Fluig**.
 
@@ -19,7 +19,7 @@ Antes de realizar o build desta imagem, certifique-se de ter:
    - `installer/fluig-installer.jar`
    - Diretório `installer/jdk-64/`
 
-   > **Observação:** Caso o diretório `installer` esteja vazio ou o arquivo `fluig-installer.jar` não seja encontrado, o processo de build fará automaticamente o download do instalador a partir do site oficial da TOTVS.
+   > **Observação:** Caso o diretório `installer` esteja vazio ou o arquivo `fluig-installer.jar` não seja encontrado, o processo de build fará automaticamente o download do instalador a partir do site oficial da TOTVS (FLUIG 2.0.0-260609).
 3. O arquivo de template de instalação: `config/install.conf.template` configurado adequadamente com variáveis de ambiente padrão.
 4. (Opcional) Um script `start-fluig` presente no `PATH` do container (ou copiado junto com os arquivos no Dockerfile), pois ele atua como o entrypoint da aplicação.
 
@@ -81,7 +81,7 @@ docker run -d \
   --name fluig-server \
   -p 8080:8080 \
   --env-file .env \
-  -v fluig_volume:/opt/fluig/volume \
+  -v fluig_volume:/opt/fluig-volume \
   fluig-base:latest
 ```
 
@@ -91,7 +91,7 @@ docker run -d \
 
 O Fluig armazena arquivos físicos de documentos e artefatos. É **fundamental** mapear volumes para garantir que os dados não sejam perdidos caso o container seja destruído ou atualizado.
 
-O diretório criado e configurado dentro do container para armazenar o **Volume do Fluig** (arquivos físicos de documentos) é o `/opt/fluig/volume`. No comando de execução acima, o volume Docker `fluig_volume` está sendo montado na raiz da instalação (`/opt/fluig`), o que já protege todos os dados do volume e configurações.
+O diretório criado e configurado dentro do container para armazenar o **Volume do Fluig** (arquivos físicos de documentos) é o `/opt/fluig-volume`. No comando de execução acima, o volume Docker `fluig_volume` está sendo montado na (`/opt/fluig-volume`), o que já protege todos os dados do volume e configurações.
 
 Certifique-se de que o **Volume de Documentos** definido durante a instalação (no `install.conf.template`) aponte corretamente para este caminho persistido.
 

@@ -26,7 +26,7 @@ services:
     command: >
       bash -c "/usr/local/bin/start-fluig"        
     volumes:
-      - fluig-volume:/opt/fluig/volume
+      - fluig-volume:/opt/fluig-volume
       - fluig_deploy:/opt/fluig/appserver/standalone/deploy
       - fluig_log:/opt/fluig/appserver/standalone/log      
     restart: unless-stopped
