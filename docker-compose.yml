@@ -24,7 +24,7 @@ services:
         soft: 65000
         hard: 65000    
     command: >
-      bash -c "[ -f .env ] || cp .env.example .env && /usr/local/bin/start-fluig"        
+      bash -c "/usr/local/bin/start-fluig"        
     volumes:
       - fluig-volume:/opt/fluig/volume
       - fluig_deploy:/opt/fluig/appserver/standalone/deploy
