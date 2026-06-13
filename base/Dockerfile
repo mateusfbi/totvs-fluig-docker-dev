@@ -99,6 +99,6 @@ RUN if [ "$INSTALL_NODE" = "true" ]; then \
     fi
 
 # Configura o diretório de volume para o Fluig
-RUN mkdir -p /opt/fluig/volume
+RUN mkdir -p /opt/fluig-volume && chmod 777 /opt/fluig-volume
 
 CMD ["start-fluig"]
