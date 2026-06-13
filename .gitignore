@@ -4,5 +4,5 @@ Thumbs.db
 .vscode/
 .idea/
 # --- Diretório do instalador ---
-base/installer/*
-!base/installer/.gitkeep
+setup/installer/*
+!setup/installer/.gitkeep

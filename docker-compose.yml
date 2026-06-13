@@ -2,7 +2,7 @@ services:
   fluig:
     image: fluig-base:latest
     build:
-      context: ./base
+      context: ./setup
       dockerfile: Dockerfile
       args:
         - VERSAO_FLUIG=2.0.0

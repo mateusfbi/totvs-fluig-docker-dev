@@ -116,13 +116,16 @@ docker logs -f fluig-server
 
 ```text
 .
-├── Dockerfile
-├── config/
-│   └── install.conf.template    # Arquivo modelo com as variáveis
-├── installer/
-│   ├── fluig-installer.jar      # Executável do instalador
-│   └── jdk-64/                  # JDK base utilizado pelo instalador
-└── start-fluig                  # Entrypoint script (exemplo)
+├── docker-compose.yml
+├── .env
+└── setup/
+    ├── Dockerfile
+    ├── start-fluig.sh               # Entrypoint script
+    ├── config/
+    │   └── install.conf.template    # Arquivo modelo com as variáveis
+    └── installer/
+        ├── fluig-installer.jar      # Executável do instalador
+        └── jdk-64/                  # JDK base utilizado pelo instalador
 ```
 
 ## 📝 Customização
