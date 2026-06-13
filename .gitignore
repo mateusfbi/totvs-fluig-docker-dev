@@ -5,3 +5,4 @@ Thumbs.db
 .idea/
 # --- Diretório do instalador ---
 base/installer/*
+!base/installer/.gitkeep
