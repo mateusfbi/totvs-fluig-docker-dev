@@ -31,10 +31,6 @@ ENV LS_PORT=$LS_PORT
 
 WORKDIR /opt/fluig
 
-# Ajustar o timezone correto
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone
-
 # Copia o script da pasta local para dentro do container
 COPY --chmod=755 ./start-fluig.sh /usr/local/bin/start-fluig
 
@@ -52,7 +48,11 @@ RUN apt-get update && \
     ca-certificates \
     openjdk-11-jdk \
     && update-ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && locale-gen pt_BR.UTF-8 \
+    && apt-get clean
 
 # Instala MySQL Connector
 RUN wget --no-check-certificate --user-agent="Mozilla/5.0" \
