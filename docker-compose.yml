@@ -19,6 +19,15 @@ services:
         - LS_HOST=${LS_HOST}
         - LS_PORT=${LS_PORT}
     container_name: fluig-app
+    environment:
+      TZ: ${TZ}
+      JAVA_OPTS: >
+        -${JAVA_XMS}
+        -${JAVA_XMX}
+        -XX:+UseG1GC
+        -Dfile.encoding=UTF-8
+        -Duser.timezone=${TZ}
+        -Djava.net.preferIPv4Stack=true
     ulimits:
       nofile:
         soft: 65000
