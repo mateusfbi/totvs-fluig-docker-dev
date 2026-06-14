@@ -1,6 +1,8 @@
 services:
   fluig:
     image: fluig-base:latest
+    mem_limit: 6g
+    mem_reservation: 3g
     build:
       context: ./setup
       dockerfile: Dockerfile
