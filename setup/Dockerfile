@@ -30,6 +30,11 @@ ENV LS_HOST=$LS_HOST
 ENV LS_PORT=$LS_PORT
 
 WORKDIR /opt/fluig
+
+# Ajustar o timezone correto
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
 # Copia o script da pasta local para dentro do container
 COPY --chmod=755 ./start-fluig.sh /usr/local/bin/start-fluig
 
